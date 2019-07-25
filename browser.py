@@ -5,7 +5,6 @@ from random import choice
 from lxml import html, etree
 from bs4 import BeautifulSoup
 import urllib3 as urllib2
-from nltk.sem.chat80 import region
 import json
 from threading import Thread
 
