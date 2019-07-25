@@ -3,8 +3,6 @@ import time
 import base64, requests
 from random import choice
 from lxml import html, etree
-from bs4 import BeautifulSoup
-import urllib3 as urllib2
 import json
 from threading import Thread
 
@@ -332,23 +330,6 @@ class Browser(webdriver.Firefox):
         passwords[0].send_keys("lolkekcheburek")
         passwords[1].send_keys("lolkekcheburek")
         self.clickElementByXpath('//*[@id="accountDetailsNext"]')
-    
-    # Логин в Google (не работает)
-    def loginGoogle(self, login, pwd):
-        url_login = "https://accounts.google.com/ServiceLogin"
-        url_auth = "https://accounts.google.com/ServiceLoginAuth"
-        self.ses = requests.session()
-        login_html = self.ses.get(url_login)
-        soup_login = BeautifulSoup(login_html.content).find('form').find_all('input')
-        my_dict = {}
-        for u in soup_login:
-            if u.has_attr('value'):
-                my_dict[u['name']] = u['value']
-        # override the inputs without login and pwd:
-        my_dict['Email'] = login
-        my_dict['Passwd'] = pwd
-        p = self.ses.post(url_auth, data=my_dict)
-        print(p.text)
     
     '''
         Вход в яндекс, через страницу wordstat
