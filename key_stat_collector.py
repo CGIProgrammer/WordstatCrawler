@@ -82,10 +82,11 @@ class Collector:
         driver.yandexLogin(self.__login, self.__password)
         subniches = self.getSubniches(industry)
         for ID,sn in subniches:
-            rqs = self.getRequests(sn)
+            rqs = self.getRequests(ID)
+            #print(rqs)
             sn_history = {}
             for i,r in enumerate(rqs):
-                history = driver.getStatHistory()
+                history = driver.getStatHistory(r)
                 if i==0:
                     sn_history = history
                 else:
@@ -95,6 +96,7 @@ class Collector:
             for k,v in sn_history.items():
                 today = datetime.today().strftime('%Y-%m-%d')
                 self.__cursor.execute('INSERT INTO requests_history(section, period, requests_count, status, update_date) VALUES("%s", "%s", "%s", 0, "%s");' % (sn, k, v['absolute'], today))
+            self.__dbase.commit()
     
     '''Сбор всех запросов'''
     def collectAll(self, mthreads):
@@ -113,5 +115,5 @@ class Collector:
             for t in threads:
                 t.join()
 
-coll = Collector()
-coll.collectAll()
+coll = Collector('serzhant.nalivaiko@yandex.ru', "lolkekcheburek")
+coll.getStatHistory('F')
