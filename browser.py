@@ -281,15 +281,15 @@ class Browser(webdriver.Firefox):
                 entry.send_keys(cappcha)
                 
                 # Ищем по xpath кнопку ввода капчи и кликаем на неё
-                button = self.get_element_by_xpath('/html/body/div[7]/div/div/table/tbody/tr/td/div/form/table/tbody/tr[2]/td[2]/span')
-                while button is None:
-                    button = self.get_element_by_xpath('/html/body/div[7]/div/div/table/tbody/tr/td/div/form/table/tbody/tr[2]/td[2]/span')
+                button = self.find_elements_by_xpath('/html/body/div[7]/div/div/table/tbody/tr/td/div/form/table/tbody/tr[2]/td[2]/span')
+                while button==[]:
                     time.sleep(0.5)
-                button.click()
+                    button = self.find_element_by_xpath('/html/body/div[7]/div/div/table/tbody/tr/td/div/form/table/tbody/tr[2]/td[2]/span')
+                button[0].click()
                 
-                time.sleep(0.5)
+                time.sleep(2)
                 # Если, после небольшого ожидания, капча ещё не исчезла, значит её ввели неправильно.
-                if button.is_displayed():
+                if button[0].is_displayed():
                     # Заказываем по новой
                     self.checkCaptcha()
                 
@@ -682,7 +682,7 @@ class Browser(webdriver.Firefox):
     
 import os,sys
 # Режим демона (без графики). Закомментировать ели нужна отладка
-os.environ['MOZ_HEADLESS'] = '1'
+#os.environ['MOZ_HEADLESS'] = '1'
 keywords = set()
 
 di = {}
