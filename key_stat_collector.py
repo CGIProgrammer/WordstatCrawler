@@ -113,3 +113,5 @@ class Collector:
             for t in threads:
                 t.join()
 
+coll = Collector()
+coll.collectAll()

@@ -5,6 +5,8 @@ from random import choice
 from lxml import html, etree
 import json
 from threading import Thread
+from pytrends.request import TrendReq
+
 
 # Антикапча
 class Anticaptcha:
@@ -315,7 +317,7 @@ class Browser(webdriver.Firefox):
         el.send_keys(text)
     
     '''
-        Регистрирует аккаюн Google (не работает, всё упирается в номер телефона)
+        Регистрирует аккаунт Google (не работает, всё упирается в номер телефона)
     '''
     def registerGoogleAccount(self):
         self.get("https://accounts.google.com/signup/v2/webcreateaccount?&gmb=exp&biz=false&flowName=GlifWebSignIn&flowEntry=SignUp")
@@ -330,6 +332,38 @@ class Browser(webdriver.Firefox):
         passwords[0].send_keys("lolkekcheburek")
         passwords[1].send_keys("lolkekcheburek")
         self.clickElementByXpath('//*[@id="accountDetailsNext"]')
+    
+    '''
+        Получение статистики по регионам от Google
+        Google даёт статистику с момента начала её сбора.
+    '''
+    def getGtrendsHistoryStat(self, request, country='ru_RU'):
+        pytrends = TrendReq(hl=country, tz=360, timeout=(10,25),
+                            #proxies=['https://34.203.233.13:80',],
+                            retries=2, backoff_factor=0.4)
+        pytrends.build_payload(kw_list=[request])
+        interest_over_time_df = pytrends.interest_over_time()
+        result = {}
+        for k,v in interest_over_time_df:
+            k = '{}-{}-{}'.format(str(k.year),str(k.month),str(k.day))
+            result[k] = {}
+            result[k]['absulute'] = v
+        return interest_over_time_df[request]
+    
+    '''Получение статистики по регионам от Google (не даёт относительную популярность)'''
+    def getGtrendsRegionalStat(self, request, country='ru_RU'):
+        pytrends = TrendReq(hl=country, tz=360, timeout=(10,25),
+                            #proxies=['https://34.203.233.13:80',],
+                            retries=2, backoff_factor=0.4)
+        pytrends.build_payload(kw_list=[request])
+        interest_by_region_df = pytrends.interest_by_region()
+        result = []
+        for k,v in interest_by_region_df.items():
+            result.append({
+                'region' : k,
+                'count'  : v
+                })
+        return result
     
     '''
         Вход в яндекс, через страницу wordstat
@@ -647,7 +681,7 @@ class Browser(webdriver.Firefox):
         return result
     
 import os,sys
-# Режим демона (без графики)
+# Режим демона (без графики). Закомментировать ели нужна отладка
 os.environ['MOZ_HEADLESS'] = '1'
 keywords = set()
 

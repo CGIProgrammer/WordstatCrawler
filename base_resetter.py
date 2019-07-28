@@ -86,7 +86,7 @@ sqlite_curs.execute(sql_requests_history)
 sqlite_curs.execute(sql_region_stats)
 sqlite_curs.execute(sql_requests)
 
-fp = open('/home/ivan/UN_stat.txt', 'r')
+fp = open('UN_stat.txt', 'r')
 labels = 'abcdefghijklmnopqrstuvwxyz'
 
 lines = fp.read().split('\n')
