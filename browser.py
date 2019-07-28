@@ -434,6 +434,7 @@ class Browser(webdriver.Firefox):
     
     '''
         Получение статистики по времени. Яндекс требует капчу при первом вызове.
+        Антикапча подключена.
     '''
     def getStatHistory(self, kwords):
         self.get("https://wordstat.yandex.ru/#!/history?words="+kwords)
@@ -442,14 +443,13 @@ class Browser(webdriver.Firefox):
         table1 = tables[0].xpath('//tr[@class = "odd" or @class = "even"]')
         table2 = tables[1].xpath('//tr[@class = "odd" or @class = "even"]')
         
-        result = []
+        result = {}
         
         for row in table1 + table2:
             line = {}
-            line['period'] = row[0].text.replace("\xa0-\xa0", ' - ')
             line['absolute'] = int(''.join([i.text for i in row[2]]))
             line['relative'] = float(''.join([i.text for i in row[3]]).replace(",", "."))
-            result.append(line)
+            result[row[0].text.replace("\xa0-\xa0", ' - ')] = line
             
         return result
     
@@ -646,7 +646,7 @@ class Browser(webdriver.Firefox):
         
         return result
     
-import os
+import os,sys
 # Режим демона (без графики)
 os.environ['MOZ_HEADLESS'] = '1'
 keywords = set()
